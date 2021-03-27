@@ -1,4 +1,5 @@
 const db = require('../db')
+const ApiError = require('../error/apiError')
 
 class ProfileController {
   async registration(req, res) {
@@ -11,8 +12,11 @@ class ProfileController {
 
   }
 
-  async check(req, res) {
-    const {id} = req.query
+  async check(req, res, next) {
+    const { id } = req.query
+    if (!id) {
+      return next(ApiError.badRequest('Не указан ID'))
+    }
     res.json(id)
   }
 
