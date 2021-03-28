@@ -1,34 +1,42 @@
-const db = require('../db')
+const { Company } = require('../models/models')
+const ApiError = require('../error/apiError')
 
 class CompanyController {
   async create(req, res) {
-   // const { lastname, firstname, middlename, email, password, phone, position } = req.body
-    //const newCompany = await db.query(`INSERT INTO companies (lastname, firstname, middlename, email, password, phone, position) values ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, [lastname, firstname, middlename, email, password, phone, position])
-    //res.json(newCompany.rows[0])
-  }
+    const { name, description, address, email, phone, url } = req.body
+    if (!name) return res.json(ApiError.badRequest("Company 'name' is required"))
 
-
-  async getAll(req, res) {
-    const companies = await db.query(`SELECT * FROM companies`)
-    res.json(companies.rows)
+    const company = await Company.create({ name, description, address, email, phone, url })
+    return res.json(company)
   }
 
   async getOne(req, res) {
-    const id = req.params.id
-    const company = await db.query(`SELECT * FROM companies WHERE id = $1`, [id])
-    res.json(company.rows[0])
+    const { id } = req.params
+    const company = await Company.findOne({ where: { id: id } })
+    res.json(company)
+  }
+
+  async getAll(req, res) {
+    const companies = await Company.findAll()
+    res.json(companies)
   }
 
   async update(req, res) {
-  //  const { id, lastname, firstname, middlename, email, password, phone, position } = req.body
-  // const updatedCompany = await db.query(`UPDATE companies SET lastname = $2, firstname = $3, middlename = $4, email = $5, password = $6, phone = $7, position = $8 WHERE id = $1 RETURNING *`, [id, lastname, firstname, middlename, email, password, phone, position])
-  //  res.json(updatedCompany.rows[0])
+    const { id, name, description, address, email, phone, url } = req.body
+    if (!id) return res.json(ApiError.badRequest("Company 'id' is required"))
+
+    const company = await Company.update(
+      { name, description, address, email, phone, url },
+      { where: { id }, returning: true, plain: true }
+    )
+    return res.json(company[1])
   }
 
   async delete(req, res) {
-    const id = req.params.id
-    const company = await db.query(`DELETE FROM companies WHERE id = $1`, [id])
-    res.json(company.rows[0])
+    const { id } = req.params
+
+    const company = await Company.destroy({ where: { id } })
+    res.json(!!company)
   }
 }
 
