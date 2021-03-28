@@ -1,9 +1,6 @@
 const sequelize = require('../db')
 const { DataTypes } = require('sequelize')
 
-//, allowNull: false
-//unique: true
-
 const Profile = sequelize.define('profile', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   lastname: { type: DataTypes.STRING },
@@ -45,10 +42,8 @@ const Tree = sequelize.define('tree', {
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.TEXT },
   status: { type: DataTypes.STRING },
-  finish_date: { type: DataTypes.DATE },
-  created_at: { type: DataTypes.DATE },
-  // company_id INTEGER,
-  //FOREIGN KEY(company_id) REFERENCES company(id)
+  finishDate: { type: DataTypes.DATE },
+
 })
 
 
@@ -57,16 +52,8 @@ const Goal = sequelize.define('goal', {
   name: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.TEXT },
   status: { type: DataTypes.STRING, allowNull: false },
-  start_date: { type: DataTypes.DATE },
-  finish_date: { type: DataTypes.DATE },
-  created_at: { type: DataTypes.DATE },
-  updated_at: { type: DataTypes.DATE },
-  //department_id INTEGER,
-  //owner_id INTEGER,
-  //tree_id INTEGER,
-  //FOREIGN KEY(department_id) REFERENCES department(id),
-  //FOREIGN KEY(owner_id) REFERENCES profile(id),
-  //FOREIGN KEY(tree_id) REFERENCES tree(id)
+  startDate: { type: DataTypes.DATE },
+  finishDate: { type: DataTypes.DATE },
 })
 
 
@@ -76,31 +63,18 @@ const KeyResult = sequelize.define('key_result', {
   name: { type: DataTypes.STRING, allowNull: false },
   plan: { type: DataTypes.REAL },
   unit: { type: DataTypes.STRING }, //ед. изм.
-  //owner_id INTEGER,
-  //goal_id INTEGER,
-  //FOREIGN KEY(owner_id) REFERENCES profile(id),
-  //FOREIGN KEY(goal_id) REFERENCES goal(id)
 })
 
 
 const KeyResultValue = sequelize.define('key_result_value', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   value: { type: DataTypes.REAL },
-  created_at: { type: DataTypes.DATE },
-  //created_by_id INTEGER,
-  //result_id INTEGER,
-  //FOREIGN KEY(created_by_id) REFERENCES profile(id),
-  //FOREIGN KEY(result_id) REFERENCES key_result(id)
 })
 
 const NeighboringRelation = sequelize.define('key_result_value', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING },
   description: { type: DataTypes.TEXT },
-  //goal_one_id INTEGER,
-  //goal_two_id INTEGER,
-  //FOREIGN KEY(goal_one_id) REFERENCES goal(id),
-  //FOREIGN KEY(goal_two_id) REFERENCES goal(id)
 })
 
 
@@ -109,8 +83,8 @@ Company.hasMany(Department)
 Department.belongsTo(Company)
 
 
-Profile.hasMany(Department)
-Department.belongsTo(Profile)
+Profile.hasMany(Department, { foreignKey: 'headProfileId' })
+Department.belongsTo(Profile, { foreignKey: 'headProfileId' })
 
 
 Profile.belongsToMany(Department, { through: ProfileDepartment })
@@ -125,23 +99,23 @@ Goal.belongsTo(Tree)
 Department.hasMany(Goal)
 Goal.belongsTo(Department)
 
-Goal.belongsToMany(Goal, { through: NeighboringRelation, as: "goal_one_id", foreignKey: "id" })
-Goal.belongsToMany(Goal, { through: NeighboringRelation, as: "goal_two_id", foreignKey: "id" })
+Goal.belongsToMany(Goal, { through: NeighboringRelation, as: "goalOneId", foreignKey: "id" })
+Goal.belongsToMany(Goal, { through: NeighboringRelation, as: "goalTwoId", foreignKey: "id" })
 
-Profile.hasMany(Goal)
-Goal.belongsTo(Profile)
+Profile.hasMany(Goal, { foreignKey: 'ownerId' })
+Goal.belongsTo(Profile, { foreignKey: 'ownerId' })
 
 Goal.hasMany(KeyResult)
 KeyResult.belongsTo(Goal)
 
-Profile.hasMany(KeyResult)
-KeyResult.belongsTo(Profile)
+Profile.hasMany(KeyResult, { foreignKey: 'ownerId' })
+KeyResult.belongsTo(Profile, { foreignKey: 'ownerId' })
 
 KeyResult.hasMany(KeyResultValue)
 KeyResultValue.belongsTo(KeyResult)
 
-Profile.hasMany(KeyResultValue)
-KeyResultValue.belongsTo(Profile)
+Profile.hasMany(KeyResultValue, { foreignKey: 'createdById' })
+KeyResultValue.belongsTo(Profile, { foreignKey: 'createdById' })
 
 module.exports = {
   Profile, Company, Department, ProfileDepartment, Tree, Goal, KeyResult, KeyResultValue, NeighboringRelation
