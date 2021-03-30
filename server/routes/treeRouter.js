@@ -1,10 +1,11 @@
 const Router = require('express')
 const router = new Router()
+const treeController = require('../controllers/treeController')
 
-router.post('/',)
-router.get('/:id',)
-router.get('/',)
-router.put('/',)
-router.delete('/:id',)
+router.post('/', treeController.create)
+router.get('/:id', treeController.getOne)
+router.get('/', treeController.getAll)
+router.put('/', treeController.update)
+router.delete('/:id', treeController.delete)
 
 module.exports = router
