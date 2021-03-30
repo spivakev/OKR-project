@@ -10,15 +10,15 @@ class CompanyController {
     return res.json(company)
   }
 
+  async getAll(req, res) {
+    const companies = await Company.findAll()
+    res.json(companies)
+  }
+
   async getOne(req, res) {
     const { id } = req.params
     const company = await Company.findOne({ where: { id: id } })
     res.json(company)
-  }
-
-  async getAll(req, res) {
-    const companies = await Company.findAll()
-    res.json(companies)
   }
 
   async update(req, res) {
