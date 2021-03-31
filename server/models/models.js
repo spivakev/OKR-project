@@ -43,7 +43,6 @@ const Tree = sequelize.define('tree', {
   description: { type: DataTypes.TEXT },
   status: { type: DataTypes.STRING },
   finishDate: { type: DataTypes.DATE },
-
 })
 
 
