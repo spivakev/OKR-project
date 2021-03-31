@@ -2,3 +2,5 @@ client/.DS_Store
 .DS_Store
 server/node_modules
 server/.env
+client/yarn.lock
+client/README.md
