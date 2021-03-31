@@ -1,4 +1,4 @@
-const { Goal } = require('../models/models')
+const { Goal, NeighboringRelation } = require('../models/models')
 const ApiError = require('../error/apiError')
 
 class GoalController {
