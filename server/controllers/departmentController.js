@@ -3,7 +3,7 @@ const ApiError = require('../error/apiError')
 
 class DepartmentController {
   async create(req, res) {
-    const { name, description, email, city }
+    const { name, description, email, city } = req.body
     if (!name) return res.json(ApiError.badRequest("Department 'name' is required"))
 
     const department = await Department.create({ name, description, email, city })
